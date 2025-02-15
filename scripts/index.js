@@ -16,8 +16,8 @@ function createCardElement(card) {
   return cardElement;
 }
 
-function deleteCard(event) {
-  event.target.closest('.card').remove();
+function deleteCard(deleteCardEvent) {
+  deleteCardEvent.target.closest('.card').remove();
 }
 
 function renderCards() {
