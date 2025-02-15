@@ -11,13 +11,13 @@ function createCardElement(card) {
 
   cardElement.querySelector('.card__title').textContent = card.name;
 
-  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCard);
+  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCardEvent);
 
   return cardElement;
 }
 
-function deleteCard(deleteCardEvent) {
-  deleteCardEvent.target.closest('.card').remove();
+function deleteCardEvent(e) {
+  e.target.closest('.card').remove();
 }
 
 function renderCards() {
