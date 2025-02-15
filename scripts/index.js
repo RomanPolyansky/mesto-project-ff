@@ -1,7 +1,7 @@
 const cardsList = getCardsList();
 renderCards();
 
-function createCardElement(card) {
+function createCardElement(card, deleteCardFunction) {
   const cardTemplate = getCardTemplate();
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -11,18 +11,18 @@ function createCardElement(card) {
 
   cardElement.querySelector('.card__title').textContent = card.name;
 
-  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCardEvent);
+  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCardFunction);
 
   return cardElement;
 }
 
-function deleteCardEvent(e) {
+function deleteCard(e) {
   e.target.closest('.card').remove();
 }
 
 function renderCards() {
   initialCards.forEach((card) => {
-    const cardElement = createCardElement(card);
+    const cardElement = createCardElement(card, deleteCard);
     cardsList.append(cardElement);
   });
 }
