@@ -1,3 +1,5 @@
+import './styles/index.css'; // добавьте импорт главного файла стилей 
+
 const cardTemplate = document.querySelector('#card-template').content;
 const cardsList = document.querySelector('.places__list');
 renderCards();
