@@ -44,7 +44,7 @@ const setProfileInfo = (profileInfo, name, description) => {
 const addNewCard = (cardObject) => {
   const newCard = cardComponent.createCard(
       { cardObject, cardTemplate, imagePopup }, 
-      { function () { cardComponent.handleCardLike }, handleImageClick }
+      { handleCardLike: cardComponent.handleCardLike, handleImageClick }
     )
   renderedCards.prepend(newCard);
 }
