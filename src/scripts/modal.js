@@ -1,15 +1,25 @@
+let currentPopupEscKeyHandler = null;
+
+const handleKeyEscape = (evt, popup) => {
+  if (evt.key === "Escape") {
+    closePopup(popup);
+  }
+}
+
 export function openPopup(popup) {
   popup.classList.add('popup_is-opened');
-  document.addEventListener('keydown', (evt) => handleKeyEscape(evt, popup))
+  currentPopupEscKeyHandler = (evt) => handleKeyEscape(evt, popup);
+  document.addEventListener('keydown', currentPopupEscKeyHandler);
 }
 
 export function closePopup(popup) {
   popup.classList.remove('popup_is-opened');
-  document.removeEventListener('keydown', (evt) => handleKeyEscape(evt, popup));
+  document.removeEventListener('keydown', currentPopupEscKeyHandler);
 }
 
-function handleKeyEscape(evt, popup) {
-  if (evt.key === "Escape") {
-    popup.classList.remove('popup_is-opened');
+export function handleClickOutsideOfContent(evt, popup) {
+  if (evt.target.classList.contains('popup')) {
+    closePopup(popup);
   }
 }
+

@@ -1,6 +1,5 @@
 import './styles/index.css';
 import * as modalComponent from './scripts/modal.js';
-import * as profileComponent from './scripts/profile.js';
 import * as cardComponent from './scripts/card.js';
 import { initialCards } from './scripts/cards.js';
 
@@ -20,11 +19,42 @@ const addCardButton = document.querySelector('.profile__add-button');
 const addCardForm = document.forms['new-place'];
 const cardTemplate = document.querySelector('#card-template').content;
 
+const populateFormByProfileInfo = (form, profileInfo) => {
+  const name = profileInfo.querySelector('.profile__title').textContent;
+  const description = profileInfo.querySelector('.profile__description').textContent;
+  setFormFields(form, name, description);
+}
+
+const updateProfileInfo = (form, profileInfo) => {
+  const name = form.elements.name.value;
+  const description = form.elements.description.value;
+  setProfileInfo(profileInfo, name, description);
+}
+
+const setFormFields = (form, name, description) => {
+  form.elements.name.value = name;
+  form.elements.description.value = description;
+}
+
+const setProfileInfo = (profileInfo, name, description) => {
+  profileInfo.querySelector('.profile__title').textContent = name;
+  profileInfo.querySelector('.profile__description').textContent = description;
+}
+
+const addNewCard = (cardObject) => {
+  const newCard = cardComponent.createCard(
+      { cardObject, cardTemplate, imagePopup }, 
+      { function () { cardComponent.handleCardLike }, handleImageClick }
+    )
+  renderedCards.prepend(newCard);
+}
+
 // Buttons listeners
 editProfileButton.addEventListener('click', (evt) => {
   modalComponent.openPopup(editProfilePopup);
-  profileComponent.populateFormByProfileInfo(profileForm, profileInfo);
+  populateFormByProfileInfo(profileForm, profileInfo);
 });
+
 addCardButton.addEventListener('click', () => {
   addCardForm.reset();
   modalComponent.openPopup(addCardPopup);
@@ -33,22 +63,26 @@ addCardButton.addEventListener('click', () => {
 // Modals common listeners
 popups.forEach((popup) => {
   // Click X to close popup
-  const xButton = popup.querySelector('.popup__close');
-  xButton.addEventListener('click', modalComponent.closePopup(popup));
+  const closeButton = popup.querySelector('.popup__close');
+  closeButton.addEventListener('click', modalComponent.closePopup(popup));
 
   // Close popup when pressing outisde of the content
-  popup.addEventListener('mousedown', (evt) => {
-    if (evt.target.classList.contains('popup')) {
-      modalComponent.closePopup(popup);
-    } 
-  });
+  popup.addEventListener('mousedown', (evt) => modalComponent.handleClickOutsideOfContent(evt, popup))
 });
 
 profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  profileComponent.updateProfileInfo(profileForm, profileInfo);
+  updateProfileInfo(profileForm, profileInfo);
   modalComponent.closePopup(editProfilePopup);
 });
+
+const handleImageClick = (cardImage, imagePopup) => {
+  const imgElementOfPopup = imagePopup.querySelector('.popup__image');
+  imgElementOfPopup.src = cardImage.src;
+  imgElementOfPopup.alt = cardImage.alt;
+  imagePopup.querySelector('.popup__caption').textContent = cardImage.alt;
+  modalComponent.openPopup(imagePopup);
+}
 
 initialCards.forEach((cardObject) => {
   addNewCard(cardObject);
@@ -60,15 +94,5 @@ addCardForm.addEventListener('submit', (evt) => {
   const link = addCardForm.elements.link.value;
   addNewCard({ name, link });
   addCardForm.reset();
-  modalComponent.closePopup(addCardForm.closest('.popup'));
+  modalComponent.closePopup(addCardPopup);
 });
-
-function addNewCard(cardObject) {
-  const newCard = cardComponent.createCard(cardObject, 
-    cardTemplate, 
-    imagePopup, 
-    cardComponent.handleCardLike, 
-    cardComponent.handleImageClick
-  );
-  renderedCards.prepend(newCard);
-}
