@@ -44,7 +44,11 @@ const setProfileInfo = (profileInfo, name, description) => {
 const addNewCard = (cardObject) => {
   const newCard = cardComponent.createCard(
       { cardObject, cardTemplate, imagePopup }, 
-      { handleCardLike: cardComponent.handleCardLike, handleImageClick }
+      { 
+        handleCardLike: cardComponent.handleCardLike, 
+        handleImageClick: handleImageClick,
+        handleCardDelete: cardComponent.handleCardDelete
+      }
     )
   renderedCards.prepend(newCard);
 }
@@ -61,14 +65,7 @@ addCardButton.addEventListener('click', () => {
 });
 
 // Modals common listeners
-popups.forEach((popup) => {
-  // Click X to close popup
-  const closeButton = popup.querySelector('.popup__close');
-  closeButton.addEventListener('click', modalComponent.closePopup(popup));
-
-  // Close popup when pressing outisde of the content
-  popup.addEventListener('mousedown', (evt) => modalComponent.handleClickOutsideOfContent(evt, popup))
-});
+popups.forEach((popup) => modalComponent.setModalWindowEventListeners(popup));
 
 profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();

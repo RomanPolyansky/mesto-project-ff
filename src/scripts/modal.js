@@ -23,3 +23,13 @@ export function handleClickOutsideOfContent(evt, popup) {
   }
 }
 
+export const setModalWindowEventListeners = (modalWindow) => {
+  // Click close button to close popup
+  modalWindow
+    .querySelector('.popup__close')
+    .addEventListener('click', () => closePopup(modalWindow));
+
+  // Close popup when pressing outisde of the content
+  modalWindow.addEventListener('mousedown', (evt) => handleClickOutsideOfContent(evt, modalWindow))
+};
+
