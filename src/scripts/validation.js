@@ -1,5 +1,3 @@
-import { debug } from "webpack";
-
 const setEventListeners = (formElement, selectors) => {
   const inputList = Array.from(formElement.querySelectorAll(selectors.inputSelector));
   const buttonElement = formElement.querySelector(selectors.submitButtonSelector);
@@ -30,26 +28,26 @@ const checkInputValidity = (formElement, inputElement, selectors) => {
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, selectors, inputElement.validationMessage);
+    showInputError(formElement, inputElement, selectors.inputErrorClass, selectors.errorClass, inputElement.validationMessage);
   } else {
-    hideInputError(formElement, inputElement, selectors);
+    hideInputError(formElement, inputElement, selectors.inputErrorClass, selectors.errorClass);
   }
 };
 
-const showInputError = (formElement, inputElement, selectors, errorMessage) => {
-  inputElement.classList.add(selectors.inputErrorClass);
-  const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+const showInputError = (formElement, inputElement, inputErrorClass, errorClass, errorMessage) => {
+  inputElement.classList.add(inputErrorClass);
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   if (errorElement) {
-    errorElement.classList.add(selectors.errorClass);
+    errorElement.classList.add(errorClass);
     errorElement.textContent = errorMessage;
   }
 };
 
-const hideInputError = (formElement, inputElement, selectors) => {
-  inputElement.classList.remove(selectors.inputErrorClass);
-  const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+const hideInputError = (formElement, inputElement, inputErrorClass, errorClass) => {
+  inputElement.classList.remove(inputErrorClass);
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   if (errorElement) {
-    errorElement.classList.remove(selectors.errorClass);
+    errorElement.classList.remove(errorClass);
     errorElement.textContent = '';
   }
 };
@@ -69,3 +67,10 @@ export const enableValidation = (selectors) => {
     setEventListeners(formElement, selectors);
   });
 }
+
+export const clearValidation = (form, validationConfig) => {
+  const inputList = Array.from(form.querySelectorAll('input'));
+  inputList.forEach((inputElement) => {
+    hideInputError(form, inputElement, validationConfig.inputErrorClass, validationConfig.errorClass);
+  });
+} 

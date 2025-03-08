@@ -67,11 +67,19 @@ const addNewCard = (cardObject) => {
 editProfileButton.addEventListener('click', (evt) => {
   modalComponent.openPopup(editProfilePopup);
   populateFormByProfileInfo(profileForm, profileInfo);
+  validationComponent.clearValidation(profileForm, {
+    inputErrorClass: '.popup__input_type_error',
+    errorClass: '.form__input-error'
+  });
 });
 
 addCardButton.addEventListener('click', () => {
   addCardForm.reset();
   modalComponent.openPopup(addCardPopup);
+  validationComponent.clearValidation(addCardForm, {
+    inputErrorClass: '.popup__input_type_error',
+    errorClass: '.form__input-error'
+  });
 });
 
 // Modals common listeners
