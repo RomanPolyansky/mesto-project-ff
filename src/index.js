@@ -1,6 +1,7 @@
 import './styles/index.css';
 import * as modalComponent from './scripts/modal.js';
 import * as cardComponent from './scripts/card.js';
+import * as validationComponent from './scripts/validation.js';
 import { initialCards } from './scripts/cards.js';
 
 const renderedCards = document.querySelector('.places__list');
@@ -18,6 +19,15 @@ const addCardPopup = document.querySelector('.popup_type_new-card');
 const addCardButton = document.querySelector('.profile__add-button');
 const addCardForm = document.forms['new-place'];
 const cardTemplate = document.querySelector('#card-template').content;
+
+validationComponent.enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
 
 const populateFormByProfileInfo = (form, profileInfo) => {
   const name = profileInfo.querySelector('.profile__title').textContent;
