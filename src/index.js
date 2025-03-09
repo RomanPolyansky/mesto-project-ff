@@ -2,7 +2,8 @@ import './styles/index.css';
 import * as modalComponent from './scripts/modal.js';
 import * as cardComponent from './scripts/card.js';
 import * as validationComponent from './scripts/validation.js';
-import { initialCards } from './scripts/cards.js';
+import * as apiComponent from './scripts/api.js';
+
 
 const renderedCards = document.querySelector('.places__list');
 
@@ -14,6 +15,7 @@ const editProfileButton = document.querySelector('.profile__edit-button');
 
 const profileForm = document.forms['edit-profile'];
 const profileInfo = document.querySelector('.profile__info');
+const profileImage = document.querySelector('.profile__image');
 
 const addCardPopup = document.querySelector('.popup_type_new-card');
 const addCardButton = document.querySelector('.profile__add-button');
@@ -38,7 +40,13 @@ const populateFormByProfileInfo = (form, profileInfo) => {
 const updateProfileInfo = (form, profileInfo) => {
   const name = form.elements.name.value;
   const description = form.elements.description.value;
-  setProfileInfo(profileInfo, name, description);
+  apiComponent.editProfile(name, description)
+  .then(res => {
+    setProfileInfo(profileInfo, res.name, res.about);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
 const setFormFields = (form, name, description) => {
@@ -46,18 +54,25 @@ const setFormFields = (form, name, description) => {
   form.elements.description.value = description;
 }
 
+const setProfileImage = (avatarElement, avatarUrl) => {
+  avatarElement.style = `background-image: url(${avatarUrl})`;
+}
+
 const setProfileInfo = (profileInfo, name, description) => {
   profileInfo.querySelector('.profile__title').textContent = name;
   profileInfo.querySelector('.profile__description').textContent = description;
 }
 
-const addNewCard = (cardObject) => {
+const addNewCard = (cardObject, me) => {
   const newCard = cardComponent.createCard(
-      { cardObject, cardTemplate, imagePopup }, 
+      { cardObject, cardTemplate, imagePopup, userId: me._id }, 
       { 
         handleCardLike: cardComponent.handleCardLike, 
+        cardLikeRequest: apiComponent.likeCard,
+        cardDislikeRequest: apiComponent.dislikeCard,
         handleImageClick: handleImageClick,
-        handleCardDelete: cardComponent.handleCardDelete
+        handleCardDelete: cardComponent.handleCardDelete,
+        cardDeleteRequest: apiComponent.deleteCard
       }
     )
   renderedCards.prepend(newCard);
@@ -99,15 +114,50 @@ const handleImageClick = (cardImage, imagePopup) => {
   modalComponent.openPopup(imagePopup);
 }
 
-initialCards.forEach((cardObject) => {
-  addNewCard(cardObject);
-});
-
 addCardForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const name = addCardForm.elements['place-name'].value;
   const link = addCardForm.elements.link.value;
-  addNewCard({ name, link });
+  apiComponent.addCard(name, link)
+  .then((res) => {
+    me.then((me) => {
+      addNewCard(res, me);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
   addCardForm.reset();
   modalComponent.closePopup(addCardPopup);
+});
+
+const me = apiComponent.getMe()
+.then(res => {
+  setProfileInfo(profileInfo, res.name, res.about);
+  setProfileImage(profileImage, res.avatar);
+  return res;
+})
+.catch((err) => {
+  console.log(err);
+});
+
+const cards = apiComponent.getCards()
+.then(res => {
+  return res;
+})
+
+const sortByCreatedAt = (a, b) => {
+  let time = new Date(a.createdAt) - new Date(b.createdAt);
+  return time;
+};
+
+Promise.all([me, cards])
+.then(([me, cards]) => {
+  cards.sort(sortByCreatedAt);
+  cards.forEach((cardObject) => {
+    addNewCard(cardObject, me);
+  });
+})
+.catch((err) => {
+  console.log(err);
 });
