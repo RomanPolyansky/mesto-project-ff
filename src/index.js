@@ -15,6 +15,7 @@ const editProfileButton = document.querySelector('.profile__edit-button');
 
 const editProfileImageButton = document.querySelector('.profile__image');
 const editProfileImagePopup = document.querySelector('.popup_type_edit-image');
+const editProfileImageForm = document.forms['edit-profile-image'];
 
 const profileForm = document.forms['edit-profile'];
 const profileInfo = document.querySelector('.profile__info');
@@ -86,16 +87,16 @@ editProfileButton.addEventListener('click', (evt) => {
   modalComponent.openPopup(editProfilePopup);
   populateFormByProfileInfo(profileForm, profileInfo);
   validationComponent.clearValidation(profileForm, {
-    inputErrorClass: '.popup__input_type_error',
-    errorClass: '.form__input-error'
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'form__input-error'
   });
 });
 
 editProfileImageButton.addEventListener('click', (evt) => {
   modalComponent.openPopup(editProfileImagePopup);
   validationComponent.clearValidation(profileForm, {
-    inputErrorClass: '.popup__input_type_error',
-    errorClass: '.form__input-error'
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'form__input-error'
   });
 });
 
@@ -103,8 +104,8 @@ addCardButton.addEventListener('click', () => {
   addCardForm.reset();
   modalComponent.openPopup(addCardPopup);
   validationComponent.clearValidation(addCardForm, {
-    inputErrorClass: '.popup__input_type_error',
-    errorClass: '.form__input-error'
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'form__input-error'
   });
 });
 
@@ -115,6 +116,22 @@ profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   updateProfileInfo(profileForm, profileInfo);
   modalComponent.closePopup(editProfilePopup);
+});
+
+editProfileImagePopup.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const avatarUrl = editProfileImageForm.elements['link'].value;
+  apiComponent.editProfileImage(avatarUrl)
+  .then(res => {
+    setProfileImage(profileImage, res.avatar);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    editProfileImageForm.reset();
+    modalComponent.closePopup(editProfileImagePopup);
+  })
 });
 
 const handleImageClick = (cardImage, imagePopup) => {

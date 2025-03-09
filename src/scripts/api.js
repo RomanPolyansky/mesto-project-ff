@@ -118,3 +118,23 @@ export const dislikeCard = (id) => {
       }
     })
 };
+
+export const editProfileImage = (link) => {
+  return fetch(`${url}/users/me/avatar`, {
+    headers: {
+      authorization: TOKEN,
+      'Content-Type': 'application/json'
+    },
+    method: 'PATCH',
+    body: JSON.stringify({
+      avatar: link
+    })
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(`Error: ${res.status}`);
+      }
+    })
+};
