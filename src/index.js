@@ -41,7 +41,8 @@ const populateFormByProfileInfo = (form, profileInfo) => {
   setFormFields(form, name, description);
 }
 
-const updateProfileInfo = (form, profileInfo) => {
+const updateProfileInfo = (button, form, profileInfo) => {
+  const buttonText = setIdling(button);
   const name = form.elements.name.value;
   const description = form.elements.description.value;
   apiComponent.editProfile(name, description)
@@ -50,7 +51,10 @@ const updateProfileInfo = (form, profileInfo) => {
   })
   .catch((err) => {
     console.log(err);
-  });
+  })
+  .finally(() => {
+    exitIdling(button, buttonText);
+  }); 
 }
 
 const setFormFields = (form, name, description) => {
@@ -114,12 +118,13 @@ popups.forEach((popup) => modalComponent.setModalWindowEventListeners(popup));
 
 profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  updateProfileInfo(profileForm, profileInfo);
+  updateProfileInfo(evt.submitter, profileForm, profileInfo);
   modalComponent.closePopup(editProfilePopup);
 });
 
 editProfileImagePopup.addEventListener('submit', (evt) => {
   evt.preventDefault();
+  const buttonText = setIdling(evt.submitter);
   const avatarUrl = editProfileImageForm.elements['link'].value;
   apiComponent.editProfileImage(avatarUrl)
   .then(res => {
@@ -130,20 +135,14 @@ editProfileImagePopup.addEventListener('submit', (evt) => {
   })
   .finally(() => {
     editProfileImageForm.reset();
+    exitIdling(evt.submitter, buttonText);
     modalComponent.closePopup(editProfileImagePopup);
   })
 });
 
-const handleImageClick = (cardImage, imagePopup) => {
-  const imgElementOfPopup = imagePopup.querySelector('.popup__image');
-  imgElementOfPopup.src = cardImage.src;
-  imgElementOfPopup.alt = cardImage.alt;
-  imagePopup.querySelector('.popup__caption').textContent = cardImage.alt;
-  modalComponent.openPopup(imagePopup);
-}
-
 addCardForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
+  const buttonText = setIdling(evt.submitter);
   const name = addCardForm.elements['place-name'].value;
   const link = addCardForm.elements.link.value;
   apiComponent.addCard(name, link)
@@ -154,10 +153,31 @@ addCardForm.addEventListener('submit', (evt) => {
   })
   .catch((err) => {
     console.log(err);
+  })
+  .finally(() => {
+    exitIdling(evt.submitter, buttonText);
+    addCardForm.reset();
+    modalComponent.closePopup(addCardPopup);
   });
-  addCardForm.reset();
-  modalComponent.closePopup(addCardPopup);
 });
+
+const handleImageClick = (cardImage, imagePopup) => {
+  const imgElementOfPopup = imagePopup.querySelector('.popup__image');
+  imgElementOfPopup.src = cardImage.src;
+  imgElementOfPopup.alt = cardImage.alt;
+  imagePopup.querySelector('.popup__caption').textContent = cardImage.alt;
+  modalComponent.openPopup(imagePopup);
+}
+
+const setIdling = (button) => {
+  const initalMessage = button.textContent;
+  button.textContent = 'Сохранение...';
+  return initalMessage;
+}
+
+const exitIdling = (button, message) => {
+  button.textContent = message;
+}
 
 const me = apiComponent.getMe()
 .then(res => {

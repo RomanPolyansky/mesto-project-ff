@@ -32,4 +32,3 @@ export const setModalWindowEventListeners = (modalWindow) => {
   // Close popup when pressing outisde of the content
   modalWindow.addEventListener('mousedown', (evt) => handleClickOutsideOfContent(evt, modalWindow))
 };
-
