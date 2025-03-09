@@ -30,8 +30,10 @@ const checkInputValidity = (formElement, inputElement, selectors) => {
 
   if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, selectors.inputErrorClass, selectors.errorClass, inputElement.validationMessage);
+    inputElement.classList.add('input_invalid');
   } else {
     hideInputError(formElement, inputElement, selectors.inputErrorClass, selectors.errorClass);
+    inputElement.classList.remove('input_invalid');
   }
 };
 

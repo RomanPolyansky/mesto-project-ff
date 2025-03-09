@@ -13,6 +13,9 @@ const popups = document.querySelectorAll('.popup');
 const editProfilePopup = document.querySelector('.popup_type_edit');
 const editProfileButton = document.querySelector('.profile__edit-button');
 
+const editProfileImageButton = document.querySelector('.profile__image');
+const editProfileImagePopup = document.querySelector('.popup_type_edit-image');
+
 const profileForm = document.forms['edit-profile'];
 const profileInfo = document.querySelector('.profile__info');
 const profileImage = document.querySelector('.profile__image');
@@ -82,6 +85,14 @@ const addNewCard = (cardObject, me) => {
 editProfileButton.addEventListener('click', (evt) => {
   modalComponent.openPopup(editProfilePopup);
   populateFormByProfileInfo(profileForm, profileInfo);
+  validationComponent.clearValidation(profileForm, {
+    inputErrorClass: '.popup__input_type_error',
+    errorClass: '.form__input-error'
+  });
+});
+
+editProfileImageButton.addEventListener('click', (evt) => {
+  modalComponent.openPopup(editProfileImagePopup);
   validationComponent.clearValidation(profileForm, {
     inputErrorClass: '.popup__input_type_error',
     errorClass: '.form__input-error'
