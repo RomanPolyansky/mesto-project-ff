@@ -1,20 +1,18 @@
-let currentPopupEscKeyHandler = null;
-
-const handleKeyEscape = (evt, popup) => {
-  if (evt.key === "Escape") {
-    closePopup(popup);
+const handleEscape = (evt) => {
+  if (evt.key === 'Escape') {
+    const openedPopup = document.querySelector('.popup_is-opened');
+    closePopup(openedPopup);
   }
 }
 
 export function openPopup(popup) {
   popup.classList.add('popup_is-opened');
-  currentPopupEscKeyHandler = (evt) => handleKeyEscape(evt, popup);
-  document.addEventListener('keydown', currentPopupEscKeyHandler);
+  document.addEventListener('keydown', handleEscape);
 }
 
 export function closePopup(popup) {
   popup.classList.remove('popup_is-opened');
-  document.removeEventListener('keydown', currentPopupEscKeyHandler);
+  document.removeEventListener('keydown', handleEscape);
 }
 
 export function handleClickOutsideOfContent(evt, popup) {

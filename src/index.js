@@ -35,19 +35,20 @@ validationComponent.enableValidation({
   errorClass: 'popup__error_visible'
 });
 
-const populateFormByProfileInfo = (form, profileInfo) => {
+const populateFormByProfileInfo = (form, profileInfo, popup) => {
   const name = profileInfo.querySelector('.profile__title').textContent;
   const description = profileInfo.querySelector('.profile__description').textContent;
   setFormFields(form, name, description);
 }
 
-const updateProfileInfo = (button, form, profileInfo) => {
+const updateProfileInfo = (button, form, profileInfo, popup) => {
   const buttonText = setIdling(button);
   const name = form.elements.name.value;
   const description = form.elements.description.value;
   apiComponent.editProfile(name, description)
   .then(res => {
     setProfileInfo(profileInfo, res.name, res.about);
+    modalComponent.closePopup(popup);
   })
   .catch((err) => {
     console.log(err);
@@ -118,8 +119,7 @@ popups.forEach((popup) => modalComponent.setModalWindowEventListeners(popup));
 
 profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  updateProfileInfo(evt.submitter, profileForm, profileInfo);
-  modalComponent.closePopup(editProfilePopup);
+  updateProfileInfo(evt.submitter, profileForm, profileInfo, editProfilePopup);
 });
 
 editProfileImagePopup.addEventListener('submit', (evt) => {
@@ -129,6 +129,7 @@ editProfileImagePopup.addEventListener('submit', (evt) => {
   apiComponent.editProfileImage(avatarUrl)
   .then(res => {
     setProfileImage(profileImage, res.avatar);
+    modalComponent.closePopup(editProfileImagePopup);
   })
   .catch((err) => {
     console.log(err);
@@ -136,7 +137,6 @@ editProfileImagePopup.addEventListener('submit', (evt) => {
   .finally(() => {
     editProfileImageForm.reset();
     exitIdling(evt.submitter, buttonText);
-    modalComponent.closePopup(editProfileImagePopup);
   })
 });
 

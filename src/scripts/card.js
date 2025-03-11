@@ -34,14 +34,13 @@ export function createCard({ cardObject, cardTemplate, imagePopup, userId }, fun
 export function handleCardLike(button, likeCounter, cardLikeRequest, cardDislikeRequest, id) {
   let request = button.classList.contains('card__like-button_is-active') ? 
     cardDislikeRequest : cardLikeRequest;
-  button.classList.toggle('card__like-button_is-active');
   request(id)
   .then((res) => {
+    button.classList.toggle('card__like-button_is-active');
     countLikes(likeCounter, res.likes);
   })
   .catch((err) => {
     console.log(err);
-    button.classList.toggle('card__like-button_is-active'); // Revert the button state
   });
 }
 
