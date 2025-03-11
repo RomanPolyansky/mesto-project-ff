@@ -149,6 +149,8 @@ addCardForm.addEventListener('submit', (evt) => {
   .then((res) => {
     me.then((me) => {
       addNewCard(res, me);
+      addCardForm.reset();
+      modalComponent.closePopup(addCardPopup);
     });
   })
   .catch((err) => {
@@ -156,8 +158,6 @@ addCardForm.addEventListener('submit', (evt) => {
   })
   .finally(() => {
     exitIdling(evt.submitter, buttonText);
-    addCardForm.reset();
-    modalComponent.closePopup(addCardPopup);
   });
 });
 
